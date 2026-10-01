@@ -7,40 +7,51 @@
   const mainNav = document.getElementById('main-nav');
   const siteHeader = document.getElementById('site-header');
 
-  if (!navToggle || !mainNav || !siteHeader) {
-    return;
-  }
-
   function setMenu(isOpen) {
+    if (!mainNav || !navToggle) return;
     mainNav.classList.toggle('open', isOpen);
+    document.body.classList.toggle('menu-open', isOpen);
     navToggle.setAttribute('aria-expanded', String(isOpen));
     navToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
   }
 
-  navToggle.addEventListener('click', () => {
-    const shouldOpen = navToggle.getAttribute('aria-expanded') !== 'true';
-    setMenu(shouldOpen);
-  });
+  if (navToggle && mainNav) {
+    navToggle.addEventListener('click', () => {
+      const shouldOpen = navToggle.getAttribute('aria-expanded') !== 'true';
+      setMenu(shouldOpen);
+    });
 
-  mainNav.addEventListener('click', (event) => {
-    if (event.target.closest('a')) {
-      setMenu(false);
-    }
-  });
+    mainNav.addEventListener('click', (event) => {
+      if (event.target.closest('a')) {
+        setMenu(false);
+      }
+    });
 
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      setMenu(false);
-      navToggle.focus();
-    }
-  });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        setMenu(false);
+        navToggle.focus();
+      }
+    });
 
-  const updateHeaderState = () => {
-    siteHeader.classList.toggle('scrolled', window.scrollY > 8);
-  };
+    document.addEventListener('click', (event) => {
+      if (
+        document.body.classList.contains('menu-open') &&
+        !mainNav.contains(event.target) &&
+        !navToggle.contains(event.target)
+      ) {
+        setMenu(false);
+      }
+    });
+  }
 
-  updateHeaderState();
-  window.addEventListener('scroll', updateHeaderState, { passive: true });
+  if (siteHeader) {
+    const updateHeaderState = () => {
+      siteHeader.classList.toggle('scrolled', window.scrollY > 8);
+    };
+    updateHeaderState();
+    window.addEventListener('scroll', updateHeaderState, { passive: true });
+  }
 
   const revealItems = document.querySelectorAll('.reveal');
 
@@ -66,4 +77,3 @@
 
   revealItems.forEach((item) => observer.observe(item));
 })();
-
