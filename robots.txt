@@ -1,18 +1,4 @@
-# robots.txt for Dr. Ramsha Ramzan — Physiotherapist Bahawalpur, Pakistan
-# https://joshwilsonnlr.github.io/Dr.ramsha/
-
 User-agent: *
 Allow: /
 
-# Allow major search engines
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Googlebot-Image
-Allow: /
-
-# Sitemap location (submit this in Google Search Console)
 Sitemap: https://joshwilsonnlr.github.io/Dr.ramsha/sitemap.xml
