@@ -62,7 +62,7 @@ a{color:var(--teal)}
 .cta-premium{background:linear-gradient(135deg,var(--deep),var(--teal));color:#fff;padding:3.5rem 0;text-align:center}
 .cta-inner{display:flex;flex-direction:column;align-items:center;text-align:center}
 .cta-inner h2{color:#fff;margin-bottom:.5rem}.cta-inner p{color:rgba(255,255,255,.88);margin-inline:auto;max-width:40rem}
-.cta-premium .btn-row,.cta-inner .btn-row{justify-content:center;align-items:center;width:100%}
+.cta-premium .btn-row,.cta-inner .btn-row{display:flex!important;justify-content:center!important;align-items:center!important;width:100%;flex-wrap:wrap;gap:.85rem;margin-top:1.25rem;margin-left:auto;margin-right:auto}
 .site-footer{background:#0a2a2f;color:#c8d9dc;padding:3rem 0 1.5rem}
 .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:2rem;margin-bottom:2rem}
 .footer-name{font-family:var(--serif);font-size:1.2rem;color:#fff;margin-bottom:.35rem}
