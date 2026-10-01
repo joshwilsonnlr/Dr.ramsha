@@ -1,4 +1,4 @@
-// Site-wide behaviour: mobile menu, header shadow, scroll reveal.
+// Site-wide: mobile menu, header shadow, scroll reveal
 (function () {
   const htmlRoot = document.documentElement;
   htmlRoot.classList.add('js');
@@ -16,28 +16,28 @@
   }
 
   if (navToggle && mainNav) {
-    navToggle.addEventListener('click', (event) => {
+    navToggle.addEventListener('click', function (event) {
       event.stopPropagation();
       event.preventDefault();
-      const shouldOpen = navToggle.getAttribute('aria-expanded') !== 'true';
+      var shouldOpen = navToggle.getAttribute('aria-expanded') !== 'true';
       setMenu(shouldOpen);
     });
 
-    mainNav.addEventListener('click', (event) => {
+    mainNav.addEventListener('click', function (event) {
       if (event.target.closest('a')) {
         setMenu(false);
       }
     });
 
-    document.addEventListener('keydown', (event) => {
+    document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') {
         setMenu(false);
         navToggle.focus();
       }
     });
 
-    // Close when tapping dark overlay (not the toggle, not the menu)
-    document.addEventListener('click', (event) => {
+    // Close when tapping outside (dark overlay area)
+    document.addEventListener('click', function (event) {
       if (!document.body.classList.contains('menu-open')) return;
       if (mainNav.contains(event.target)) return;
       if (navToggle.contains(event.target)) return;
@@ -46,31 +46,16 @@
   }
 
   if (siteHeader) {
-    const updateHeaderState = () => {
+    var updateHeaderState = function () {
       siteHeader.classList.toggle('scrolled', window.scrollY > 8);
     };
     updateHeaderState();
     window.addEventListener('scroll', updateHeaderState, { passive: true });
   }
 
-  const revealItems = document.querySelectorAll('.reveal');
-
-  if (!('IntersectionObserver' in window)) {
-    revealItems.forEach((item) => item.classList.add('in'));
-    return;
-  }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-  );
-
-  revealItems.forEach((item) => observer.observe(item));
+  // Reveal: make all visible immediately, then optional soft fade
+  var revealItems = document.querySelectorAll('.reveal');
+  revealItems.forEach(function (item) {
+    item.classList.add('in');
+  });
 })();
