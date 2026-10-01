@@ -39,7 +39,6 @@ html, body {
     width: 100% !important;
   }
 
-  /* Extra bottom padding so content is not hidden behind sticky bar */
   body {
     padding-bottom: 72px !important;
   }
@@ -152,7 +151,6 @@ html, body {
   .brand-text strong { font-size: 1rem; }
   .container { width: min(100% - 1.5rem, 1160px) !important; }
 
-  /* ---- Services: Book buttons look good on mobile ---- */
   .service-showcase {
     padding: 1.15rem 1.1rem !important;
   }
@@ -171,7 +169,6 @@ html, body {
     gap: 0.9rem !important;
   }
 
-  /* ---- Philosophy of Care: tighter spacing on mobile ---- */
   .philosophy-point {
     display: grid !important;
     grid-template-columns: 36px 1fr !important;
@@ -196,7 +193,6 @@ html, body {
     line-height: 1.4 !important;
   }
 
-  /* ---- Bottom sticky bar: Call | Book | WhatsApp (mobile only) ---- */
   .mobile-actions {
     display: flex !important;
     position: fixed !important;
@@ -243,7 +239,6 @@ html, body {
     background: #0a4a52;
   }
 
-  /* Hero / layout stacks */
   .hero-grid {
     grid-template-columns: 1fr !important;
     gap: 2rem !important;
@@ -273,6 +268,18 @@ html, body {
     align-items: stretch;
   }
   .btn-row .btn { width: 100%; }
+  /* CTA section buttons stay centered */
+  .cta-premium .btn-row,
+  .cta-inner .btn-row {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .cta-premium .btn-row .btn,
+  .cta-inner .btn-row .btn {
+    width: auto !important;
+    min-width: min(100%, 260px);
+  }
 
   .split,
   .contact-grid,
