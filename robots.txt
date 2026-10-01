@@ -1,4 +1,77 @@
+# ============================================================
+# robots.txt — Dr. Ramsha Ramzan | Physiotherapist Bahawalpur
+# Site: https://joshwilsonnlr.github.io/Dr.ramsha/
+# Purpose: Allow indexing by all search engines (SEO)
+# ============================================================
+
+# --- Default: allow all crawlers ---
 User-agent: *
 Allow: /
+Disallow:
 
+# --- Google ---
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-News
+Allow: /
+
+User-agent: Googlebot-Video
+Allow: /
+
+User-agent: Storebot-Google
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+# --- Bing / Microsoft ---
+User-agent: Bingbot
+Allow: /
+
+User-agent: msnbot
+Allow: /
+
+User-agent: BingPreview
+Allow: /
+
+# --- Yahoo ---
+User-agent: Slurp
+Allow: /
+
+# --- Yandex ---
+User-agent: Yandex
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# --- DuckDuckGo ---
+User-agent: DuckDuckBot
+Allow: /
+
+# --- Baidu ---
+User-agent: Baiduspider
+Allow: /
+
+# --- Other common crawlers ---
+User-agent: Applebot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+# --- Sitemap (required for SEO discovery) ---
 Sitemap: https://joshwilsonnlr.github.io/Dr.ramsha/sitemap.xml
