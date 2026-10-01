@@ -60,7 +60,9 @@ a{color:var(--teal)}
 .page-hero{padding:3rem 0 1.5rem;background:linear-gradient(165deg,#f4fbfb,#f8f4f1)}
 .page-hero .lead{font-size:1.15rem;color:var(--muted)}
 .cta-premium{background:linear-gradient(135deg,var(--deep),var(--teal));color:#fff;padding:3.5rem 0;text-align:center}
-.cta-inner h2{color:#fff;margin-bottom:.5rem}.cta-inner p{color:rgba(255,255,255,.88);margin-inline:auto}
+.cta-inner{display:flex;flex-direction:column;align-items:center;text-align:center}
+.cta-inner h2{color:#fff;margin-bottom:.5rem}.cta-inner p{color:rgba(255,255,255,.88);margin-inline:auto;max-width:40rem}
+.cta-premium .btn-row,.cta-inner .btn-row{justify-content:center;align-items:center;width:100%}
 .site-footer{background:#0a2a2f;color:#c8d9dc;padding:3rem 0 1.5rem}
 .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:2rem;margin-bottom:2rem}
 .footer-name{font-family:var(--serif);font-size:1.2rem;color:#fff;margin-bottom:.35rem}
@@ -79,6 +81,5 @@ a{color:var(--teal)}
 .form-note{font-size:.85rem;color:var(--muted);margin-top:.75rem}
 .about-photo{border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
 .about-photo img{width:100%;aspect-ratio:1;object-fit:cover}
-/* Reveal always visible — was opacity:0 which hid content */
 .reveal{opacity:1;transform:none}
 .reveal.in{opacity:1;transform:none}
