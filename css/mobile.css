@@ -1,49 +1,85 @@
-/* Mobile fix for Dr. Ramsha site */
+/* Mobile fix — hide desktop nav, show hamburger drawer only */
 @media (max-width: 900px) {
+  /* Show hamburger */
   .nav-toggle {
     display: grid !important;
     place-items: center;
-    z-index: 60;
+    z-index: 70;
+    flex-shrink: 0;
   }
-  .main-nav {
-    position: fixed !important;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: auto;
-    width: min(86vw, 320px);
-    height: 100dvh;
-    background: #fff;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 0;
-    padding: 5.5rem 1.5rem 2rem;
-    box-shadow: -12px 0 40px rgba(10, 74, 82, 0.15);
-    transform: translateX(105%);
-    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    z-index: 55;
-    overflow-y: auto;
-  }
-  .main-nav.open {
-    transform: translateX(0);
-  }
-  .main-nav ul {
-    flex-direction: column !important;
-    gap: 0;
-    width: 100%;
-  }
-  .main-nav ul li {
-    border-bottom: 1px solid #d5e3e5;
-  }
-  .main-nav a:not(.btn) {
-    display: block;
-    padding: 1rem 0.25rem;
-    font-size: 1.1rem;
-    border-bottom: none !important;
-  }
+
+  /* Hide Book button in header on mobile */
   .nav-cta {
     display: none !important;
   }
+
+  /* Drawer: fully hidden until .open */
+  .main-nav {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: auto !important;
+    width: min(86vw, 320px) !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    background: #fff !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 0 !important;
+    padding: 5.5rem 1.5rem 2rem !important;
+    box-shadow: -12px 0 40px rgba(10, 74, 82, 0.18);
+    z-index: 65 !important;
+    overflow-y: auto !important;
+    /* KEY: hide off-screen */
+    transform: translateX(110%) !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.25s ease,
+                visibility 0.35s;
+  }
+
+  /* Open state — slide in */
+  .main-nav.open {
+    transform: translateX(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+  }
+
+  .main-nav ul {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    width: 100% !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .main-nav ul li {
+    border-bottom: 1px solid #d5e3e5;
+    width: 100%;
+  }
+
+  .main-nav a:not(.btn) {
+    display: block !important;
+    padding: 1rem 0.25rem !important;
+    font-size: 1.1rem !important;
+    border-bottom: none !important;
+    color: #12262b !important;
+  }
+
+  .main-nav .btn {
+    margin-top: 1.25rem;
+    width: 100%;
+  }
+
+  /* Hamburger → X when open */
   .nav-toggle[aria-expanded="true"] span:nth-child(1) {
     transform: translateY(7px) rotate(45deg);
   }
@@ -53,16 +89,33 @@
   .nav-toggle[aria-expanded="true"] span:nth-child(3) {
     transform: translateY(-7px) rotate(-45deg);
   }
+
   body.menu-open {
-    overflow: hidden;
+    overflow: hidden !important;
   }
   body.menu-open::before {
     content: "";
     position: fixed;
     inset: 0;
     background: rgba(10, 42, 47, 0.45);
-    z-index: 54;
+    z-index: 60;
   }
+
+  /* Header layout */
+  .header-inner {
+    min-height: 64px;
+  }
+  .brand-text small {
+    display: none;
+  }
+  .brand-text strong {
+    font-size: 1rem;
+  }
+  .container {
+    width: min(100% - 1.5rem, 1160px);
+  }
+
+  /* Hero & sections */
   .hero-grid {
     grid-template-columns: 1fr !important;
     gap: 2rem !important;
@@ -87,31 +140,26 @@
   .btn-row .btn {
     width: 100%;
   }
-  .split, .contact-grid, .seo-content {
+  .split,
+  .contact-grid,
+  .seo-content {
     grid-template-columns: 1fr !important;
   }
-  .card-grid, .expertise-grid, .steps, .services-showcase,
-  .trust-grid, .trust-section .trust-grid {
+  .card-grid,
+  .expertise-grid,
+  .steps,
+  .services-showcase,
+  .trust-grid,
+  .trust-section .trust-grid,
+  .form-grid,
+  .footer-grid {
     grid-template-columns: 1fr !important;
-  }
-  .form-grid, .footer-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .brand-text small {
-    display: none;
-  }
-  .brand-text strong {
-    font-size: 1rem;
-  }
-  .header-inner {
-    min-height: 64px;
-  }
-  .container {
-    width: min(100% - 1.5rem, 1160px);
   }
 }
+
 @media (max-width: 1024px) {
-  .services-showcase, .trust-section .trust-grid {
+  .services-showcase,
+  .trust-section .trust-grid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
