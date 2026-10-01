@@ -1,4 +1,5 @@
+# Robots for Dr. Ramsha Ramzan — Physiotherapist Bahawalpur
 User-agent: *
 Allow: /
 
-Sitemap: https://joshwilsonnlr.github.io/Moeen-Medicare/sitemap.xml
+Sitemap: https://joshwilsonnlr.github.io/Dr.ramsha/sitemap.xml
