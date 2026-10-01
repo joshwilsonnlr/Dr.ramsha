@@ -16,7 +16,9 @@
   }
 
   if (navToggle && mainNav) {
-    navToggle.addEventListener('click', () => {
+    navToggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      event.preventDefault();
       const shouldOpen = navToggle.getAttribute('aria-expanded') !== 'true';
       setMenu(shouldOpen);
     });
@@ -34,14 +36,12 @@
       }
     });
 
+    // Close when tapping dark overlay (not the toggle, not the menu)
     document.addEventListener('click', (event) => {
-      if (
-        document.body.classList.contains('menu-open') &&
-        !mainNav.contains(event.target) &&
-        !navToggle.contains(event.target)
-      ) {
-        setMenu(false);
-      }
+      if (!document.body.classList.contains('menu-open')) return;
+      if (mainNav.contains(event.target)) return;
+      if (navToggle.contains(event.target)) return;
+      setMenu(false);
     });
   }
 
@@ -69,10 +69,7 @@
         }
       });
     },
-    {
-      threshold: 0.12,
-      rootMargin: '0px 0px -40px 0px',
-    }
+    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
   );
 
   revealItems.forEach((item) => observer.observe(item));
