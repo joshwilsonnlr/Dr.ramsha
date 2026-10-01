@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://joshwilsonnlr.github.io/Moeen-Medicare/sitemap.xml
