@@ -1,6 +1,6 @@
 // Appointment form: validation + AJAX submission to Formspree.
 (function () {
-  const ENDPOINT = 'https://formspree.io/f/mnpnwdqe';
+  const ENDPOINT = 'https://formspree.io/f/xljdkzyd';
   const form = document.getElementById('appointment-form');
 
   if (!form) {
@@ -193,4 +193,3 @@
     }
   });
 })();
-
