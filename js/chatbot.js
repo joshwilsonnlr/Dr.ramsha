@@ -38,9 +38,12 @@
     });
   }
   document.addEventListener("click", function (e) {
-    if (!panel.hidden && !panel.contains(e.target) && e.target !== fab && !fab.contains(e.target)) {
-      setOpen(false);
-    }
+    if (panel.hidden) return;
+    // Keep open when click is inside panel or on the FAB
+    if (panel.contains(e.target) || fab === e.target || fab.contains(e.target)) return;
+    // Ignore clicks on nodes already removed from the panel (e.g. quick-reply chips)
+    if (e.target && e.target.closest && e.target.closest("#chat-panel, #chat-widget, .chat-chip, .chat-quick")) return;
+    setOpen(false);
   });
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && !panel.hidden) setOpen(false);
@@ -73,7 +76,9 @@
       btn.type = "button";
       btn.className = "chat-chip";
       btn.textContent = label;
-      btn.addEventListener("click", function () {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
         handleUser(label);
       });
       wrap.appendChild(btn);
@@ -161,6 +166,7 @@
   if (form && input) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
+      e.stopPropagation();
       var val = (input.value || "").trim();
       if (!val) return;
       input.value = "";
