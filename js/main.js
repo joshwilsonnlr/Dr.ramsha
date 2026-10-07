@@ -2,7 +2,6 @@
 (function () {
   "use strict";
 
-  // Sticky header shadow
   var header = document.getElementById("site-header");
   if (header) {
     var onScroll = function () {
@@ -13,7 +12,6 @@
     onScroll();
   }
 
-  // Mobile menu
   var toggle = document.getElementById("nav-toggle");
   var nav = document.getElementById("main-nav");
   function setMenu(open) {
@@ -40,7 +38,6 @@
     });
   }
 
-  // Reveal on scroll (respect reduced motion)
   if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     var reveals = document.querySelectorAll(".reveal");
     if ("IntersectionObserver" in window && reveals.length) {
@@ -62,34 +59,4 @@
   } else {
     document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
   }
-
-  // Chat widget toggle
-  (function () {
-    var fab = document.getElementById("chat-fab");
-    var panel = document.getElementById("chat-panel");
-    var closeBtn = document.getElementById("chat-close");
-    if (!fab || !panel) return;
-    function setOpen(open) {
-      fab.setAttribute("aria-expanded", open ? "true" : "false");
-      panel.hidden = !open;
-    }
-    fab.addEventListener("click", function (e) {
-      e.stopPropagation();
-      setOpen(panel.hidden);
-    });
-    if (closeBtn) {
-      closeBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        setOpen(false);
-      });
-    }
-    document.addEventListener("click", function (e) {
-      if (!panel.hidden && !panel.contains(e.target) && e.target !== fab && !fab.contains(e.target)) {
-        setOpen(false);
-      }
-    });
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && !panel.hidden) setOpen(false);
-    });
-  })();
 })();
