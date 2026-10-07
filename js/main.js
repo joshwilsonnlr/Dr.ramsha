@@ -14,27 +14,38 @@
 
   var toggle = document.getElementById("nav-toggle");
   var nav = document.getElementById("main-nav");
+
   function setMenu(open) {
     if (!toggle || !nav) return;
     document.body.classList.toggle("menu-open", open);
+    nav.classList.toggle("open", open);
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
     toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
   }
+
   if (toggle && nav) {
     toggle.addEventListener("click", function (e) {
+      e.preventDefault();
       e.stopPropagation();
-      setMenu(!document.body.classList.contains("menu-open"));
+      var isOpen = document.body.classList.contains("menu-open") || nav.classList.contains("open");
+      setMenu(!isOpen);
     });
+
     document.addEventListener("click", function (e) {
-      if (document.body.classList.contains("menu-open") && !nav.contains(e.target) && e.target !== toggle) {
-        setMenu(false);
-      }
+      if (!document.body.classList.contains("menu-open") && !nav.classList.contains("open")) return;
+      if (nav.contains(e.target)) return;
+      if (toggle === e.target || toggle.contains(e.target)) return;
+      setMenu(false);
     });
+
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") setMenu(false);
     });
+
     nav.querySelectorAll("a").forEach(function (a) {
-      a.addEventListener("click", function () { setMenu(false); });
+      a.addEventListener("click", function () {
+        setMenu(false);
+      });
     });
   }
 
@@ -52,11 +63,17 @@
         },
         { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
       );
-      reveals.forEach(function (el) { io.observe(el); });
+      reveals.forEach(function (el) {
+        io.observe(el);
+      });
     } else {
-      reveals.forEach(function (el) { el.classList.add("in"); });
+      reveals.forEach(function (el) {
+        el.classList.add("in");
+      });
     }
   } else {
-    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+    document.querySelectorAll(".reveal").forEach(function (el) {
+      el.classList.add("in");
+    });
   }
 })();
