@@ -27,12 +27,19 @@
     toggle.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
-      var isOpen = document.body.classList.contains("menu-open") || nav.classList.contains("open");
+      var isOpen =
+        document.body.classList.contains("menu-open") ||
+        nav.classList.contains("open");
       setMenu(!isOpen);
     });
 
     document.addEventListener("click", function (e) {
-      if (!document.body.classList.contains("menu-open") && !nav.classList.contains("open")) return;
+      if (
+        !document.body.classList.contains("menu-open") &&
+        !nav.classList.contains("open")
+      ) {
+        return;
+      }
       if (nav.contains(e.target)) return;
       if (toggle === e.target || toggle.contains(e.target)) return;
       setMenu(false);
