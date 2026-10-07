@@ -1,61 +1,95 @@
-// Site-wide: mobile menu, header shadow, scroll reveal
+/* Dr. Ramsha Ramzan — site interactions */
 (function () {
-  const htmlRoot = document.documentElement;
-  htmlRoot.classList.add('js');
+  "use strict";
 
-  const navToggle = document.getElementById('nav-toggle');
-  const mainNav = document.getElementById('main-nav');
-  const siteHeader = document.getElementById('site-header');
-
-  function setMenu(isOpen) {
-    if (!mainNav || !navToggle) return;
-    mainNav.classList.toggle('open', isOpen);
-    document.body.classList.toggle('menu-open', isOpen);
-    navToggle.setAttribute('aria-expanded', String(isOpen));
-    navToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-  }
-
-  if (navToggle && mainNav) {
-    navToggle.addEventListener('click', function (event) {
-      event.stopPropagation();
-      event.preventDefault();
-      var shouldOpen = navToggle.getAttribute('aria-expanded') !== 'true';
-      setMenu(shouldOpen);
-    });
-
-    mainNav.addEventListener('click', function (event) {
-      if (event.target.closest('a')) {
-        setMenu(false);
-      }
-    });
-
-    document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') {
-        setMenu(false);
-        navToggle.focus();
-      }
-    });
-
-    // Close when tapping outside (dark overlay area)
-    document.addEventListener('click', function (event) {
-      if (!document.body.classList.contains('menu-open')) return;
-      if (mainNav.contains(event.target)) return;
-      if (navToggle.contains(event.target)) return;
-      setMenu(false);
-    });
-  }
-
-  if (siteHeader) {
-    var updateHeaderState = function () {
-      siteHeader.classList.toggle('scrolled', window.scrollY > 8);
+  // Sticky header shadow
+  var header = document.getElementById("site-header");
+  if (header) {
+    var onScroll = function () {
+      if (window.scrollY > 8) header.classList.add("scrolled");
+      else header.classList.remove("scrolled");
     };
-    updateHeaderState();
-    window.addEventListener('scroll', updateHeaderState, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
   }
 
-  // Reveal: make all visible immediately, then optional soft fade
-  var revealItems = document.querySelectorAll('.reveal');
-  revealItems.forEach(function (item) {
-    item.classList.add('in');
-  });
+  // Mobile menu
+  var toggle = document.getElementById("nav-toggle");
+  var nav = document.getElementById("main-nav");
+  function setMenu(open) {
+    if (!toggle || !nav) return;
+    document.body.classList.toggle("menu-open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  }
+  if (toggle && nav) {
+    toggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      setMenu(!document.body.classList.contains("menu-open"));
+    });
+    document.addEventListener("click", function (e) {
+      if (document.body.classList.contains("menu-open") && !nav.contains(e.target) && e.target !== toggle) {
+        setMenu(false);
+      }
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setMenu(false);
+    });
+    nav.querySelectorAll("a").forEach(function (a) {
+      a.addEventListener("click", function () { setMenu(false); });
+    });
+  }
+
+  // Reveal on scroll (respect reduced motion)
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    var reveals = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window && reveals.length) {
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in");
+              io.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+      );
+      reveals.forEach(function (el) { io.observe(el); });
+    } else {
+      reveals.forEach(function (el) { el.classList.add("in"); });
+    }
+  } else {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+  }
+
+  // Chat widget toggle
+  (function () {
+    var fab = document.getElementById("chat-fab");
+    var panel = document.getElementById("chat-panel");
+    var closeBtn = document.getElementById("chat-close");
+    if (!fab || !panel) return;
+    function setOpen(open) {
+      fab.setAttribute("aria-expanded", open ? "true" : "false");
+      panel.hidden = !open;
+    }
+    fab.addEventListener("click", function (e) {
+      e.stopPropagation();
+      setOpen(panel.hidden);
+    });
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        setOpen(false);
+      });
+    }
+    document.addEventListener("click", function (e) {
+      if (!panel.hidden && !panel.contains(e.target) && e.target !== fab && !fab.contains(e.target)) {
+        setOpen(false);
+      }
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !panel.hidden) setOpen(false);
+    });
+  })();
 })();
