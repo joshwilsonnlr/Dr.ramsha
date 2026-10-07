@@ -1,195 +1,149 @@
-// Appointment form: validation + AJAX submission to Formspree.
+/**
+ * Appointment form handling for Formspree (https://formspree.io/f/xljdkzyd)
+ */
 (function () {
-  const ENDPOINT = 'https://formspree.io/f/xljdkzyd';
   const form = document.getElementById('appointment-form');
+  if (!form) return;
 
-  if (!form) {
-    return;
-  }
-
-  const submitButton = document.getElementById('submit-btn');
-  const buttonLabel = submitButton ? submitButton.querySelector('.btn-label') : null;
+  const submitButton = form.querySelector('button[type="submit"]');
+  const buttonLabel = submitButton ? submitButton.querySelector('span') || submitButton : null;
   const statusBox = document.getElementById('form-status');
+  const phoneInput = document.getElementById('phone');
+  const emailInput = document.getElementById('email');
+  const dateInput = document.getElementById('date');
 
-  let isSubmitting = false;
-
-  // Earliest selectable date is today in local time.
-  const dateInput = form.elements.preferred_date;
-  const today = new Date();
-  dateInput.min = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-
-  // Preselect a service from ?service=slug, used by service links.
-  const serviceParam = new URLSearchParams(window.location.search).get('service');
-  if (serviceParam) {
-    const matchingOption = form.querySelector(`#service option[data-key="${CSS.escape(serviceParam)}"]`);
-    if (matchingOption) {
-      form.elements.service.value = matchingOption.value;
-    }
+  function setMinDate() {
+    if (!dateInput) return;
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    dateInput.min = `${yyyy}-${mm}-${dd}`;
   }
 
-  const validationRules = {
-    full_name: (value) => value.trim().length >= 2 || 'Enter your full name.',
-    phone: (value) => {
-      const digits = value.replace(/\D/g, '');
-      return (/^[+\d\s()-]+$/.test(value.trim()) && digits.length >= 10 && digits.length <= 15) || 'Enter a valid phone number, for example 0312 1234567.';
-    },
-    email: (value) => value.trim() === '' || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim()) || 'Enter a valid email address.',
-    service: (value) => value !== '' || 'Choose the service you need.',
-    preferred_date: (value) => {
-      if (!value) return 'Choose a preferred date.';
-      return value >= dateInput.min || 'Choose today or a future date.';
-    },
-    consent: () => form.elements.consent.checked || 'Please agree to be contacted so we can reply to your request.',
-  };
+  function clearFieldErrors() {
+    form.querySelectorAll('.field-error').forEach((el) => el.remove());
+    form.querySelectorAll('[aria-invalid="true"]').forEach((el) => {
+      el.removeAttribute('aria-invalid');
+    });
+  }
 
-  function setFieldError(field, message) {
-    const wrapper = field.closest('.field, .field-check');
-    if (!wrapper) {
-      return;
-    }
-
-    wrapper.querySelectorAll('.field-error').forEach((errorNode) => errorNode.remove());
-    field.removeAttribute('aria-describedby');
-
-    if (!message) {
-      field.removeAttribute('aria-invalid');
-      return;
-    }
-
-    const errorId = `${field.id}-error`;
-    const errorText = document.createElement('span');
+  function showFieldError(input, message) {
+    if (!input) return;
+    input.setAttribute('aria-invalid', 'true');
+    const errorText = document.createElement('p');
     errorText.className = 'field-error';
-    errorText.id = errorId;
     errorText.textContent = message;
-
-    wrapper.appendChild(errorText);
-    field.setAttribute('aria-invalid', 'true');
-    field.setAttribute('aria-describedby', errorId);
+    const field = input.closest('.field') || input.parentElement;
+    if (field) field.appendChild(errorText);
   }
 
-  function validateField(fieldName) {
-    const field = form.elements[fieldName];
-    const rule = validationRules[fieldName];
-    const rawValue = field.type === 'checkbox' ? '' : field.value;
-    const result = rule(rawValue);
-
-    setFieldError(field, result === true ? '' : result);
-    return result === true;
+  function isValidPhone(value) {
+    const digits = value.replace(/\D/g, '');
+    return digits.length >= 10 && digits.length <= 15;
   }
 
-  function validateAllFields() {
-    let firstInvalidField = null;
+  function isValidEmail(value) {
+    if (!value) return true;
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
 
-    Object.keys(validationRules).forEach((fieldName) => {
-      if (!validateField(fieldName) && !firstInvalidField) {
-        firstInvalidField = form.elements[fieldName];
+  function validateForm() {
+    clearFieldErrors();
+    let valid = true;
+
+    const requiredFields = form.querySelectorAll('[required]');
+    requiredFields.forEach((field) => {
+      if (field.type === 'checkbox') {
+        if (!field.checked) {
+          valid = false;
+          showFieldError(field, 'This field is required.');
+        }
+        return;
+      }
+      if (!String(field.value || '').trim()) {
+        valid = false;
+        showFieldError(field, 'This field is required.');
       }
     });
 
-    if (firstInvalidField) {
-      firstInvalidField.focus();
+    if (phoneInput && phoneInput.value.trim() && !isValidPhone(phoneInput.value)) {
+      valid = false;
+      showFieldError(phoneInput, 'Enter a valid phone number.');
     }
 
-    return !firstInvalidField;
+    if (emailInput && emailInput.value.trim() && !isValidEmail(emailInput.value)) {
+      valid = false;
+      showFieldError(emailInput, 'Enter a valid email address.');
+    }
+
+    return valid;
   }
-
-  Object.keys(validationRules).forEach((fieldName) => {
-    const field = form.elements[fieldName];
-
-    field.addEventListener('blur', () => {
-      if (field.value || field.type === 'checkbox') {
-        validateField(fieldName);
-      }
-    });
-
-    field.addEventListener('input', () => {
-      if (field.getAttribute('aria-invalid')) {
-        validateField(fieldName);
-      }
-    });
-
-    field.addEventListener('change', () => {
-      if (field.getAttribute('aria-invalid')) {
-        validateField(fieldName);
-      }
-    });
-  });
 
   function showStatus(type, title, text) {
-    if (!statusBox) {
-      return;
-    }
-
+    if (!statusBox) return;
     statusBox.hidden = false;
     statusBox.className = `form-status ${type}`;
     statusBox.innerHTML = '';
-
-    const heading = document.createElement('h3');
+    statusBox.setAttribute('tabindex', '-1');
+    const heading = document.createElement('strong');
     heading.textContent = title;
-
     const paragraph = document.createElement('p');
     paragraph.textContent = text;
-
     statusBox.append(heading, paragraph);
     statusBox.focus();
   }
 
-  function setLoadingState(isLoading) {
-    isSubmitting = isLoading;
-
-    if (submitButton) {
-      submitButton.classList.toggle('is-loading', isLoading);
-      submitButton.setAttribute('aria-disabled', String(isLoading));
-      submitButton.setAttribute('aria-busy', String(isLoading));
-    }
-
+  function setLoading(isLoading) {
+    if (!submitButton) return;
+    submitButton.disabled = isLoading;
+    submitButton.setAttribute('aria-busy', isLoading ? 'true' : 'false');
     if (buttonLabel) {
       buttonLabel.textContent = isLoading ? 'Sending...' : 'Request an Appointment';
+    } else {
+      submitButton.textContent = isLoading ? 'Sending...' : 'Request an Appointment';
     }
   }
 
-  form.addEventListener('submit', async (event) => {
+  form.addEventListener('submit', async function (event) {
     event.preventDefault();
-
-    if (isSubmitting) {
-      return;
-    }
-
     if (statusBox) {
       statusBox.hidden = true;
     }
-
-    if (!validateAllFields()) {
+    if (!validateForm()) {
+      showStatus('error', 'Please check the form', 'Some required fields need attention.');
       return;
     }
 
-    setLoadingState(true);
-
+    setLoading(true);
     try {
-      const response = await fetch(ENDPOINT, {
+      const response = await fetch(form.action, {
         method: 'POST',
         body: new FormData(form),
-        headers: { Accept: 'application/json' },
+        headers: { Accept: 'application/json' }
       });
 
       if (!response.ok) {
         throw new Error(`Formspree responded with ${response.status}`);
       }
 
-      form.reset();
       showStatus(
         'success',
-        'Appointment Request Sent!',
-        'Thank you for contacting Dr. Ramsha Ramzan. Your appointment request has been received. We will contact you to confirm the appointment.'
+        'Request sent',
+        'Thank you for contacting Dr. Ramsha Ramzan. Your appointment request has been received. We will contact you by phone or WhatsApp to confirm the time. For urgent queries, message 0312-7114451.'
       );
+      form.reset();
+      setMinDate();
     } catch (error) {
       showStatus(
         'error',
-        'Something went wrong.',
-        'Your request could not be submitted. Please try again or contact us directly by phone or WhatsApp.'
+        'Could not send request',
+        'Please try again, or contact us directly on WhatsApp or phone: 0312-7114451.'
       );
     } finally {
-      setLoadingState(false);
+      setLoading(false);
     }
   });
+
+  setMinDate();
 })();
